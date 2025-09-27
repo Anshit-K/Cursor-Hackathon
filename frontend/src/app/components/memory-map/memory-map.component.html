@@ -1,0 +1,104 @@
+<div class="memory-map">
+  <div class="memory-map__container">
+    <!-- Map Container -->
+    <div 
+      #mapContainer 
+      class="memory-map__map"
+      [class.memory-map__map--loading]="isLoading">
+    </div>
+
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading" class="memory-map__loading">
+      <div class="memory-map__spinner"></div>
+      <p class="memory-map__loading-text">Loading...</p>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="memory-map__error">
+      <div class="memory-map__error-content">
+        <span class="memory-map__error-icon">⚠️</span>
+        <p class="memory-map__error-text">{{ error }}</p>
+        <button 
+          class="memory-map__error-retry"
+          (click)="loadPins()">
+          Try Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="memory-map__instructions">
+      <p class="memory-map__subtitle">
+        {{ isSharedMode ? 'Viewing shared memory map' : 'Click anywhere on the map to share a memory' }}
+      </p>
+      <div class="memory-map__buttons">
+        <button 
+          *ngIf="!isSharedMode"
+          class="memory-map__search-button"
+          (click)="openLocationSearch()"
+          aria-label="Search for a location">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          Search Places
+        </button>
+        
+        <button 
+          class="memory-map__memories-button"
+          (click)="openMemoriesList()"
+          aria-label="View all memories">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3h18v18H3zM9 9h6v6H9z"></path>
+            <path d="M9 3v6M15 3v6M9 15v6M15 15v6"></path>
+          </svg>
+          View Memories
+        </button>
+        
+        <button 
+          *ngIf="!isSharedMode"
+          class="memory-map__share-button"
+          (click)="shareMap()"
+          aria-label="Share this memory map">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+          Share Map
+        </button>
+      </div>
+    </div>
+
+    <!-- Location Search Modal -->
+    <app-location-search
+      [isVisible]="showLocationSearch"
+      (locationSelected)="onLocationSelected($event)"
+      (searchClosed)="onSearchClosed()">
+    </app-location-search>
+
+    <!-- Memories List Modal -->
+    <app-memories-list
+      [isVisible]="showMemoriesList"
+      (memorySelected)="onMemorySelected($event)"
+      (listClosed)="onMemoriesListClosed()">
+    </app-memories-list>
+
+    <!-- Story Form Modal -->
+    <div *ngIf="showStoryForm && pendingCoordinates" class="memory-map__modal">
+      <div class="memory-map__modal-backdrop" (click)="onStoryCancelled()"></div>
+      <div class="memory-map__modal-content">
+        <app-story-form
+          [lat]="pendingCoordinates.lat"
+          [lng]="pendingCoordinates.lng"
+          [locationName]="pendingCoordinates.name"
+          (storySubmitted)="onStorySubmitted($event)"
+          (cancelled)="onStoryCancelled()">
+        </app-story-form>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<div class="memories-list" [class.memories-list--visible]="isVisible">
+  <div class="memories-list__container">
+    <div class="memories-list__header">
+      <h3 class="memories-list__title">All Memories</h3>
+      <button 
+        class="memories-list__close" 
+        (click)="closeList()"
+        aria-label="Close memories list"
+        type="button">
+        ×
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="memories-list__loading">
+      <div class="memories-list__spinner"></div>
+      <p>Loading memories...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="memories-list__error">
+      <div class="memories-list__error-icon">⚠️</div>
+      <p class="memories-list__error-text">{{ error }}</p>
+      <button 
+        class="memories-list__retry-button"
+        (click)="loadMemories()">
+        Try Again
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !error && memories.length === 0" class="memories-list__empty">
+      <div class="memories-list__empty-icon">🗺️</div>
+      <h4>No memories yet</h4>
+      <p>Start exploring the map and add your first memory!</p>
+    </div>
+
+    <!-- Memories List -->
+    <div *ngIf="!isLoading && !error && memories.length > 0" class="memories-list__content">
+      <div class="memories-list__stats">
+        <span class="memories-list__count">{{ memories.length }} {{ memories.length === 1 ? 'memory' : 'memories' }}</span>
+      </div>
+
+      <div class="memories-list__items">
+        <div 
+          *ngFor="let memory of memories; trackBy: trackByMemoryId" 
+          class="memories-list__item"
+          (click)="selectMemory(memory)">
+          
+          <div class="memories-list__item-header">
+            <div class="memories-list__place-name">
+              📍 {{ memory.placeName }}
+            </div>
+            <div class="memories-list__date">
+              {{ formatDate(memory.timestamp) }}
+            </div>
+          </div>
+
+          <div class="memories-list__story">
+            {{ getMemoryPreview(memory.story) }}
+          </div>
+
+          <div *ngIf="memory.imagePath" class="memories-list__image">
+            <div class="memories-list__image-preview">
+              <img [src]="memory.imagePath" alt="Memory image" class="memories-list__thumbnail" />
+            </div>
+          </div>
+
+          <div class="memories-list__item-footer">
+            <span class="memories-list__coordinates">{{ memory.lat | number:'1.4-4' }}, {{ memory.lng | number:'1.4-4' }}</span>
+            <span class="memories-list__view">Click to view on map →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

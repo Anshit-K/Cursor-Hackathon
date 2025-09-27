@@ -1,0 +1,138 @@
+<div class="story-form">
+  <div class="story-form__header">
+    <div class="story-form__header-content">
+      <div class="story-form__icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14,2 14,8 20,8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10,9 9,9 8,9"></polyline>
+        </svg>
+      </div>
+      <div class="story-form__title-section">
+        <h3 class="story-form__title">Create New Memory</h3>
+        <p class="story-form__subtitle">Capture a moment from this special place</p>
+      </div>
+    </div>
+    <button 
+      class="story-form__close" 
+      (click)="onCancel()"
+      aria-label="Close form"
+      type="button">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+  
+  <div class="story-form__location">
+    <div class="story-form__location-info">
+      <div class="story-form__location-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+      </div>
+      <div class="story-form__location-details">
+        <span class="story-form__coordinates">
+          {{ lat | number:'1.4-4' }}, {{ lng | number:'1.4-4' }}
+        </span>
+        <span class="story-form__location-hint">Click anywhere nearby to adjust location</span>
+      </div>
+    </div>
+  </div>
+
+  <form [formGroup]="storyForm" (ngSubmit)="onSubmit()" class="story-form__form">
+    <div class="story-form__field">
+      <label for="placeName" class="story-form__label">
+        Place Name
+      </label>
+      <input
+        id="placeName"
+        type="text"
+        formControlName="placeName"
+        class="story-form__input"
+        placeholder="Enter a name for this place..."
+        maxlength="100"
+      />
+      <div class="story-form__help">
+        Give this location a memorable name
+      </div>
+    </div>
+
+        <div class="story-form__field">
+          <label for="story" class="story-form__label">
+            What happened here? ({{ remainingCharacters }} characters left)
+          </label>
+          <textarea
+            id="story"
+            formControlName="story"
+            class="story-form__textarea"
+            placeholder="Share a memory, story, or moment from this location..."
+            rows="4"
+            maxlength="200"
+            aria-describedby="story-help">
+          </textarea>
+          <div 
+            id="story-help" 
+            class="story-form__help"
+            [class.story-form__help--error]="!isStoryValid && storyForm.get('story')?.touched">
+            {{ remainingCharacters }} characters remaining
+          </div>
+        </div>
+
+        <div class="story-form__field">
+          <label for="image" class="story-form__label">
+            Add a Photo (Optional)
+          </label>
+          <div class="story-form__image-upload">
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              class="story-form__file-input"
+              (change)="onImageSelected($event)"
+            />
+            <label for="image" class="story-form__file-label">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21,15 16,10 5,21"></polyline>
+              </svg>
+              <span>Choose Image</span>
+            </label>
+            <div *ngIf="selectedImagePath" class="story-form__image-preview">
+              <div class="story-form__image-display">
+                <img [src]="selectedImagePath" alt="Selected image" class="story-form__preview-image" />
+              </div>
+              <button type="button" class="story-form__remove-image" (click)="removeImage()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="story-form__help">
+            Upload a photo to remember this moment
+          </div>
+        </div>
+
+    <div class="story-form__actions">
+      <button 
+        type="button" 
+        class="story-form__button story-form__button--secondary"
+        (click)="onCancel()">
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        class="story-form__button story-form__button--primary"
+        [disabled]="!storyForm.valid">
+        Save Memory
+      </button>
+    </div>
+  </form>
+</div>

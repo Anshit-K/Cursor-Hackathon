@@ -1,0 +1,77 @@
+<div class="location-search" [class.location-search--visible]="isVisible">
+  <div class="location-search__container">
+    <div class="location-search__header">
+      <h3 class="location-search__title">Search for a Location</h3>
+      <button 
+        class="location-search__close" 
+        (click)="closeSearch()"
+        aria-label="Close search"
+        type="button">
+        ×
+      </button>
+    </div>
+
+    <div class="location-search__input-container">
+      <div class="location-search__input-wrapper">
+        <input
+          type="text"
+          [value]="searchQuery"
+          (input)="onInputChange($event)"
+          (focus)="onInputFocus()"
+          (blur)="onInputBlur()"
+          class="location-search__input"
+          placeholder="Search for a place..."
+          autocomplete="off"
+        />
+        <div class="location-search__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Loading indicator -->
+      <div *ngIf="isSearching" class="location-search__loading">
+        <div class="location-search__spinner"></div>
+        <span>Searching...</span>
+      </div>
+
+      <!-- Search results -->
+      <div *ngIf="showResults && searchResults.length > 0" class="location-search__results">
+        <div 
+          *ngFor="let place of searchResults" 
+          class="location-search__result-item"
+          (click)="selectLocation(place)">
+          <div class="location-search__result-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <div class="location-search__result-content">
+            <div class="location-search__result-name">{{ place.name }}</div>
+            <div class="location-search__result-address">{{ place.formatted_address }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No results message -->
+      <div *ngIf="showResults && !isSearching && searchResults.length === 0 && searchQuery.length > 2" 
+           class="location-search__no-results">
+        <div class="location-search__no-results-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </div>
+        <p>No places found for "{{ searchQuery }}"</p>
+        <small>Try a different search term</small>
+      </div>
+    </div>
+
+    <div class="location-search__instructions">
+      <p>Search for any place in the world to add a memory there!</p>
+    </div>
+  </div>
+</div>

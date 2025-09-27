@@ -1,0 +1,59 @@
+# ================================================================
+# Cursor Rules – Engineering Director Edition
+# Context: Angular 17 frontend + Node/Express backend
+# Goal: Keep AI output production-grade, secure, and maintainable.
+# ================================================================
+
+meta:
+  owner: "Director of Engineering"
+  updated: "2025-09-26"
+  purpose: >
+    Provide guardrails so that any AI-generated code meets our
+    internal standards for quality, security, and scalability.
+
+general:
+  - Always favor readability and maintainability over brevity.
+  - Follow Angular Style Guide (John Papa) and Node.js best practices.
+  - Use TypeScript everywhere (strict mode enabled).
+  - Write self-documenting code; comments only for non-obvious logic.
+  - Never commit secrets, tokens, or credentials.
+
+frontend:
+  - Generate Angular components using standalone APIs (`@Component({standalone:true})`)
+    unless there is a strong reason to use NgModules.
+  - Use reactive forms over template-driven forms for anything non-trivial.
+  - State management: prefer built-in signals or NgRx if global state is needed.
+  - SCSS is the default stylesheet format; follow BEM naming.
+  - All services must be providedIn: 'root' unless a narrower scope is required.
+  - Always include basic accessibility (ARIA roles, keyboard navigation).
+
+backend:
+  - Node/Express with TypeScript. Use ES modules.
+  - Input validation via `zod` or `class-validator` before hitting business logic.
+  - All async code must use `async/await`; no unhandled promise rejections.
+  - Use environment variables via `dotenv` (never hardcode secrets).
+  - Logging: integrate a structured logger (e.g. pino or Winston).
+
+testing:
+  - Frontend: Angular TestBed + Jest. Backend: Jest + Supertest.
+  - Minimum 80% line coverage for critical logic.
+  - Include at least one e2e test covering primary user flow.
+
+security:
+  - Sanitize all user input (backend and frontend).
+  - Enable strict CSP headers and Angular’s built-in XSS protections.
+  - Avoid `eval`, `innerHTML`, or direct DOM manipulation unless absolutely required,
+    and then sanitize/justify in comments.
+
+performance:
+  - Use lazy loading for feature modules or large standalone components.
+  - Ensure change detection is optimized; use `OnPush` where appropriate.
+  - Backend endpoints must respond in <300 ms for typical workloads.
+
+process:
+  - Break work into small, reviewable commits with meaningful messages.
+  - After each AI-generated change, run `npm run lint && npm test` before committing.
+  - If AI proposes a dependency, justify why it’s needed and prefer
+    lightweight, well-maintained libraries.
+
+# End of rules

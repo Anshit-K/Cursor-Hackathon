@@ -1,0 +1,723 @@
+.memory-map {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+
+  &__container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+  }
+
+  &__map {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+
+    &--loading {
+      opacity: 0.7;
+    }
+
+    // Style zoom controls to be more professional and keep within viewport
+    :global(.leaflet-control-zoom) {
+      z-index: 1000 !important;
+      position: fixed !important;
+      bottom: 120px !important;
+      right: 20px !important;
+      top: auto !important;
+      left: auto !important;
+      max-width: calc(100vw - 40px) !important;
+      max-height: calc(100vh - 40px) !important;
+    }
+
+    // Style zoom controls to be more professional
+    :global(.leaflet-control-zoom a) {
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px) !important;
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
+      color: #374151 !important;
+      font-weight: 600 !important;
+      font-size: 18px !important;
+      width: 40px !important;
+      height: 40px !important;
+      line-height: 38px !important;
+      transition: all 0.2s ease !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+
+      &:hover {
+        background: rgba(255, 255, 255, 1) !important;
+        color: #1f2937 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+      }
+    }
+  }
+
+  &__loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  &__spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  &__loading-text {
+    margin: 0;
+    color: #666;
+    font-size: 0.875rem;
+  }
+
+  &__error {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 10;
+    max-width: 400px;
+  }
+
+  &__error-content {
+    background: #fff5f5;
+    border: 1px solid #fed7d7;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__error-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  &__error-text {
+    margin: 0;
+    color: #c53030;
+    font-size: 0.875rem;
+    flex: 1;
+  }
+
+  &__error-retry {
+    background: #e53e3e;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: #c53030;
+    }
+  }
+
+  &__instructions {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.98);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    max-width: 300px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  &__title {
+    margin: 0 0 8px 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitle {
+    margin: 0 0 16px 0;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__search-button,
+  &__memories-button,
+  &__share-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &:focus {
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  &__search-button {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+
+    &:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    }
+  }
+
+  &__memories-button {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+
+    &:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+  }
+
+  &__share-button {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+
+    &:hover {
+      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+      box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+    }
+  }
+
+  &__modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 80px 20px 20px;
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+
+  &__modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  &__modal-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 400px;
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
+    margin: 0 auto;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Modern Leaflet popup styles
+:global(.leaflet-popup-content) {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+:global(.clean-card-popup) {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
+  overflow: hidden !important;
+  min-width: 320px !important;
+  max-width: 400px !important;
+  animation: popupSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transform-origin: bottom center !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+
+  .popup-profile {
+    padding: 24px 28px 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%) !important;
+
+    .profile-avatar {
+      flex-shrink: 0 !important;
+
+      .avatar-circle {
+        width: 56px !important;
+        height: 56px !important;
+        border-radius: 16px !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: white !important;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3) !important;
+        animation: float 3s ease-in-out infinite !important;
+      }
+    }
+
+    .profile-info {
+      flex: 1 !important;
+      min-width: 0 !important;
+
+      .profile-name {
+        font-size: 1.3rem !important;
+        font-weight: 800 !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+        margin-bottom: 4px !important;
+        letter-spacing: -0.02em !important;
+      }
+
+      .profile-details {
+        font-size: 0.9rem !important;
+        color: #64748b !important;
+        font-weight: 500 !important;
+        line-height: 1.4 !important;
+      }
+    }
+
+        .popup-close {
+          background: rgba(255, 255, 255, 0.1);
+          border: none;
+          padding: 10px;
+          border-radius: 12px;
+          cursor: pointer;
+          color: #94a3b8;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+          backdrop-filter: blur(10px);
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #4a5568;
+            transform: scale(1.05);
+          }
+
+          &:focus {
+            outline: 2px solid #cbd5e1;
+            outline-offset: 2px;
+          }
+        }
+      }
+
+      .popup-info-grid {
+        padding: 24px 28px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.8) 100%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+
+        .info-box {
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(10px);
+          border-radius: 12px;
+          padding: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+          transition: all 0.2s ease;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+          }
+
+          .info-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+
+            svg {
+              width: 16px;
+              height: 16px;
+              color: #94a3b8;
+            }
+          }
+
+          .info-value {
+            font-size: 0.95rem;
+            color: #1a1a1a;
+            font-weight: 600;
+            line-height: 1.3;
+            word-break: break-word;
+          }
+        }
+      }
+
+      .popup-content {
+        padding: 24px 28px;
+
+        .content-label {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 16px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+
+          svg {
+            width: 18px;
+            height: 18px;
+            color: #94a3b8;
+          }
+        }
+
+        .memory-story {
+          font-size: 1rem;
+          color: #2d3748;
+          line-height: 1.6;
+          word-wrap: break-word;
+          font-weight: 400;
+          letter-spacing: -0.01em;
+          background: rgba(248, 250, 252, 0.8);
+          backdrop-filter: blur(10px);
+          padding: 16px;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+      }
+
+      .popup-actions {
+        padding: 20px 28px 24px;
+        display: flex;
+        gap: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, rgba(248, 250, 252, 0.5) 0%, rgba(241, 245, 249, 0.5) 100%);
+        backdrop-filter: blur(10px);
+
+        .action-button {
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          padding: 12px 18px;
+          border-radius: 12px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 0.9rem;
+          color: #64748b;
+          font-weight: 600;
+          transition: all 0.2s ease;
+          flex: 1;
+          justify-content: center;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+          &:hover {
+            background: rgba(255, 255, 255, 1);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: #475569;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+          }
+
+          &:first-child:hover {
+            background: rgba(254, 242, 242, 0.9);
+            border-color: rgba(254, 202, 202, 0.5);
+            color: #dc2626;
+          }
+
+          &:last-child:hover {
+            background: rgba(239, 246, 255, 0.9);
+            border-color: rgba(191, 219, 254, 0.5);
+            color: #2563eb;
+          }
+
+          svg {
+            flex-shrink: 0;
+          }
+        }
+      }
+}
+
+// Custom Pin Icon Styles - Hackathon Edition! 🚀
+:global(.custom-pin) {
+  background: transparent !important;
+  border: none !important;
+  
+  .pin-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pinPulse 2s ease-in-out infinite;
+  }
+
+  .pin-icon {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); // Trendy gradient
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    width: 36px; // Even bigger for impact
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(255, 107, 107, 0.6), 0 0 0 4px rgba(255, 255, 255, 0.3); // Double shadow + ring
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 3px solid white;
+    cursor: pointer;
+
+    svg {
+      transform: rotate(45deg);
+      color: white;
+      width: 22px;
+      height: 22px;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    }
+
+    &:hover {
+      transform: rotate(-45deg) scale(1.2);
+      box-shadow: 0 6px 25px rgba(255, 107, 107, 0.8), 0 0 0 6px rgba(255, 255, 255, 0.4);
+      animation: pinBounce 0.6s ease;
+    }
+  }
+
+  .pin-shadow {
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 12px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(4px);
+    z-index: 1;
+  }
+
+  // Trendy pulse animation
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(255, 107, 107, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ripple 2s ease-out infinite;
+    z-index: 0;
+  }
+}
+
+// Trendy animations for hackathon wow factor! ✨
+@keyframes pinPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes pinBounce {
+  0%, 20%, 50%, 80%, 100% { transform: rotate(-45deg) scale(1.2) translateY(0); }
+  40% { transform: rotate(-45deg) scale(1.2) translateY(-8px); }
+  60% { transform: rotate(-45deg) scale(1.2) translateY(-4px); }
+}
+
+@keyframes ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes popupSlideIn {
+  0% {
+    transform: translateY(20px) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+// Searched Location Marker Styles
+:global(.searched-location-pin) {
+  background: transparent !important;
+  border: none !important;
+  
+  .searched-pin-container {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .searched-pin-icon {
+    position: relative;
+    z-index: 2;
+    background: #28a745;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    border: 2px solid white;
+
+    svg {
+      transform: rotate(45deg);
+      color: white;
+      width: 12px;
+      height: 12px;
+    }
+
+    &:hover {
+      transform: rotate(-45deg) scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .searched-pin-shadow {
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    filter: blur(2px);
+    z-index: 1;
+  }
+}
+
+// Searched Location Popup Styles
+:global(.searched-location-popup) {
+  text-align: center;
+  min-width: 200px;
+
+  h4 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 1rem;
+  }
+
+  p {
+    margin: 0 0 12px 0;
+    color: #666;
+    font-size: 0.875rem;
+  }
+
+  .add-memory-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: #218838;
+    }
+
+    &:focus {
+      outline: 2px solid #28a745;
+      outline-offset: 2px;
+    }
+  }
+}
