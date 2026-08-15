@@ -259,6 +259,50 @@ Response:
 
 ## 🚀 Production Deployment
 
+### GitHub Pages
+This project is configured for static deployment on GitHub Pages.
+
+- Live frontend: `https://anshitkuda.github.io/Memory-Lane/`
+- GitHub Pages source: GitHub Actions
+- Demo mode: the frontend works without a backend by storing data in browser localStorage
+
+### Hackathon Credentials / Demo Notes
+This project is intended as a hackathon MVP and is designed to work with minimal setup.
+
+- No login is required for the default demo experience
+- For the full location search experience, optionally add a Google Maps API key in the frontend environment file
+- If the backend is not running, the app still loads and saves memories in the browser for demo use
+- For local development, use the backend at `http://localhost:3001` and the frontend at `http://localhost:4200`
+
+### Google Maps API Setup
+If you want to enable full place search features, add your API key in:
+
+```ts
+frontend/src/environments/environment.ts
+```
+
+Example:
+```ts
+export const environment = {
+  production: false,
+  googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY',
+  apiBaseUrl: 'http://localhost:3001'
+};
+```
+
+For production GitHub Pages deployment, the app automatically falls back to a demo mode without a key.
+
+## 🧾 Hackathon Summary
+
+Memory Lane is a location-based memory-sharing MVP built for quick demoing and presentation. It is optimized for:
+
+- simple local setup
+- visual storytelling on an interactive map
+- GitHub Pages deployment compatibility
+- minimal required credentials for a hackathon demo
+
+
+
 For production deployment, you would typically:
 
 1. **Backend**: Deploy to services like Railway, Render, or AWS
