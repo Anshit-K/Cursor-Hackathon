@@ -2,7 +2,14 @@
 
 A hackathon-ready MVP for sharing location-based memories with a beautiful map interface.
 
-## 🚀 Quick Start
+## � Demo Login
+
+Use these credentials to log in to the app quickly:
+
+- Username: `cursorWinner`
+- Password: `abcd`
+
+## �🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+ 
