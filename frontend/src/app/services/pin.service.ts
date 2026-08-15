@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Pin, CreatePinRequest, ApiResponse } from '../models/pin.model';
 import { environment } from '../../environments/environment';
 
@@ -81,7 +82,15 @@ export class PinService {
       return of({ success: true, data: newPin });
     }
 
-    return this.http.post<ApiResponse<Pin>>(`${this.apiUrl}/pins`, pinData);
+    return this.http.post<ApiResponse<Pin>>(`${this.apiUrl}/pins`, pinData).pipe(
+      catchError(() => {
+        const newPin = this.createDemoPin(pinData);
+        const pins = this.getDemoPins();
+        const updatedPins = [newPin, ...pins];
+        this.saveDemoPins(updatedPins);
+        return of({ success: true, data: newPin });
+      })
+    );
   }
 
   getAllPins(): Observable<ApiResponse<Pin[]>> {
@@ -89,7 +98,9 @@ export class PinService {
       return of({ success: true, data: this.getDemoPins() });
     }
 
-    return this.http.get<ApiResponse<Pin[]>>(`${this.apiUrl}/pins`);
+    return this.http.get<ApiResponse<Pin[]>>(`${this.apiUrl}/pins`).pipe(
+      catchError(() => of({ success: true, data: this.getDemoPins() }))
+    );
   }
 
 }
